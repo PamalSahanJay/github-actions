@@ -12,4 +12,4 @@ jobs:
           - name: list files
             run: ls -la
           - name: read file
-            run: cat example.txt
+            run: cat ex.txt
