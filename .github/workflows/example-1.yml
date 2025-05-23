@@ -20,6 +20,6 @@ jobs:
           - name: checkout repo
             uses: actions/checkout@v4
           - name: check files
-            run: ls -al
-          - name: print files
-            run: cat example.txt
+            run: |
+              ls -al
+              cat example.txt
