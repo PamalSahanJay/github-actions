@@ -7,15 +7,19 @@ jobs:
     first_job:
         runs-on: ubuntu-latest
         steps:
+          - name: Run a script
+            run: echo "Hello, world!"
+          - name: create file
+            run: echo "This is a sample file." > ex.txt
+          - name: read file
+            run: cat ex.txt
+    
+    second_job:
+        runs-on: ubuntu-latest
+        steps:
           - name: checkout repo
             uses: actions/checkout@v4
           - name: check files
             run: ls -al
           - name: print files
             run: cat example.txt
-          - name: Run a script
-            run: echo "Hello, world!"
-          - name: create file
-            run: echo "This is a sample file." > ex.txt
-          - name: read file
-            run: cat ex.txt 
