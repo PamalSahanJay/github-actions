@@ -9,5 +9,7 @@ jobs:
         steps:
           - name: Checkout code
             uses: actions/checkout@v2
+          - name: Make run.sh executable
+            run: chmod +x ./run.sh
           - name: read sh file
             run: ./run.sh
