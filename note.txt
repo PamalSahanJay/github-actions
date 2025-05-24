@@ -25,7 +25,8 @@ git hub action
         cat ascii_art.txt
 		
     this will be failed if you are not install cowsay library to the runner ( virtual environment )
+	
+- how to deploy multiple jobs
 
-
-- how to run the shell scripts
-    
+	if me add add mulitple jobs there are run parallel and differt virtual instances ( not in one )
+	
