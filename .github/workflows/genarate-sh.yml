@@ -1,0 +1,11 @@
+name: genarate sh scripts
+on:
+  push:
+    branches:
+      - main
+jobs:
+    ascii-job:
+        runs-on: ubuntu-latest
+        steps:
+          - name: read sh file
+            run: ./run.sh

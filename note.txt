@@ -1,0 +1,31 @@
+git hub action
+
+-how to use 3rd party libry in github actions
+	these are bulid for the specific workflows.
+		for an example to download the repository to the runner 
+			we can use 
+				- name: checkout repo
+				  uses: actions/checkout@v4
+				
+				
+- how to run multiple commands 
+    - name: check files
+      run: |
+        ls -al
+        cat example.txt
+		
+		
+- before runnig 3rd party commands we need to install 3rd party library 
+	- name: Generate ASCII art
+      run: |
+        echo "Hello, world!" | cowsay > ascii_art.txt
+    - name: Display ASCII art
+      run: |
+        echo "Generated ASCII art:"
+        cat ascii_art.txt
+		
+    this will be failed if you are not install cowsay library to the runner ( virtual environment )
+
+
+- how to run the shell scripts
+    
