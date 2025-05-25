@@ -44,3 +44,20 @@ git hub action
         steps:
 		
 	we can give it as simple string or just like an array
+	
+- how to get visible other files in the vm to another vm
+	first we have to upload it from a vm
+		  - name: Upload File
+              uses: actions/upload-artifact@v4
+              with:
+                name: dragon-file
+                path: dragon.txt
+
+	other vm should download it 
+		  - name: Download File
+              uses: actions/download-artifact@v4
+              with:
+                name: dragon-file
+
+	in here github keep upload file artifact ( here dragon-file by name) and we can donload it as well.
+	
