@@ -61,3 +61,29 @@ git hub action
 
 	in here github keep upload file artifact ( here dragon-file by name) and we can donload it as well.
 	
+- how to explore variable an secrets
+	we can define environment varable 
+		in step level, in job level and in workflows level ( visibility depends on each level )
+
+	name: Genarate Secrets and Variables
+	on:
+	  push:
+		branches:
+		  - main
+	env:
+		MY_EMAIL: "p.s.jayawickrama@gmail.com"
+
+	jobs:
+		first_job:
+			runs-on: ubuntu-latest
+			env:
+				My_CITY: "Colombo"
+			steps:
+				- name: print my name and age
+				  env:
+					MY_NAME: "Pamal Shan"
+					MY_AGE: "25"
+				  run: echo "My name is $MY_NAME and I am ${{env.MY_AGE}} years old and I live in ${{env.My_CITY}}"
+				- name: print my email
+				  run: echo "My email is ${{env.MY_EMAIL}}"
+				  
