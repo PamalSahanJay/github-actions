@@ -1,8 +1,7 @@
 name: genarate multiple jobs
 on:
-  push:
-    branches:
-      - main
+    workflow_dispatch: 
+
 jobs:
     build_job:
         runs-on: ubuntu-latest
@@ -31,6 +30,9 @@ jobs:
               run: grep -i "dragon" dragon.txt
     
     deploy_job:
+        concurrency:
+            group: prod-deploy-job
+            cancel-in-progress: true
         needs: [test_job]
         runs-on: ubuntu-latest
         steps:
