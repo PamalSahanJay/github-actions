@@ -8,6 +8,9 @@ on:
         output_file:
           description: "The name of the output file"
           required: true
+        output_file_number:
+          description: "The number of the output file"
+          required: true
         
 
 jobs:
