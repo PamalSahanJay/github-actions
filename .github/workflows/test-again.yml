@@ -1,17 +1,9 @@
 name: My test on GitHub Actions
 
 on:
-  workflow_dispatch:
-    inputs:
-      workflow_id:
-        description: "The ID of the workflow to download"
-        required: true
-      output_file:
-        description: "The name of the output file"
-        required: true
-      output_file_number:
-        description: "The number of the output file"
-        required: true
+    push:
+        branches:
+            - test
 
 jobs:
     download-file:
