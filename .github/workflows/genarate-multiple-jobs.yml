@@ -1,6 +1,14 @@
 name: genarate multiple jobs
 on:
-    workflow_dispatch: 
+    workflow_dispatch:
+      inputs:
+        workflow_id:
+          description: "The ID of the workflow to download"
+          required: true
+        output_file:
+          description: "The name of the output file"
+          required: true
+        
 
 jobs:
     build_job:
@@ -36,6 +44,8 @@ jobs:
         needs: [test_job]
         runs-on: ubuntu-latest
         steps:
+            - name: Sleep for 60 seconds
+              run: sleep 60
             - name: Download File
               uses: actions/download-artifact@v4
               with:
