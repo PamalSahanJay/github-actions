@@ -1,9 +1,20 @@
-name: My test on GitHub Actions
+name: My test on GitHub Actions pamal test
 
 on:
     push:
         branches:
             - test
+    workflow_dispatch:
+        inputs:
+            workflow_id:
+                description: "The ID of the workflow to download"
+                required: true
+            output_file:
+                description: "The name of the output file"
+                required: true
+            output_file_number:
+                description: "The number of the output file"
+                required: true
 
 jobs:
     download-file:
