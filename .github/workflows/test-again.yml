@@ -1,0 +1,35 @@
+name: My test on GitHub Actions
+
+on:
+  workflow_dispatch:
+    inputs:
+      workflow_id:
+        description: "The ID of the workflow to download"
+        required: true
+      output_file:
+        description: "The name of the output file"
+        required: true
+      output_file_number:
+        description: "The number of the output file"
+        required: true
+
+jobs:
+    download-file:
+        runs-on: ubuntu-latest
+    
+        env:
+            WORKFLOW_ID: ${{ inputs.workflow_id }}
+            OUTPUT_FILE: ${{ inputs.output_file }}
+            OUTPUT_FILE_NUMBER: ${{ inputs.output_file_number }}
+    
+        steps:
+        - name: Display Inputs
+          run: |
+            echo "Workflow ID: $WORKFLOW_ID"
+            echo "Output File: $OUTPUT_FILE"
+            echo "Output File Number: $OUTPUT_FILE_NUMBER"
+    
+        - name: Create Output File
+          run: |
+            echo "This is output file number $OUTPUT_FILE_NUMBER" > $OUTPUT_FILE
+            echo "✅ Output file created successfully"
