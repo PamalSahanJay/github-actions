@@ -1,0 +1,23 @@
+name: request for testing
+
+on:
+    workflow_dispatch:
+        inputs:
+            workflow_id:
+                description: 'Workflow ID to trigger'
+                required: true
+            output_file:
+                description: 'File to write the output to'
+                required: true
+            
+jobs:
+    run_workflow:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Testing
+              run: |
+                    echo "Workflow ID: ${{ github.event.inputs.workflow_id }}"
+                    echo "Output file: ${{ github.event.inputs.output_file }}"
+                    echo "This is a test workflow."
+                    echo "Workflow ID: ${{ github.event.inputs.workflow_id }}" >> ${{ github.event.inputs.output_file }}
+                    echo "Output file: ${{ github.event.inputs.output_file }}" >> ${{ github.event.inputs.output_file }}
