@@ -1,9 +1,14 @@
 name: Download Workflow File From Non-Prod Env
 
 on:
-    push: 
-        branches:
-            - test 
+    workflow_dispatch:
+        inputs:
+            workflow_id:
+                description: "The ID of the workflow to download"
+                required: true
+            output_file:
+                description: "The name of the output file"
+                required: true
 
 jobs:
   download-file:
