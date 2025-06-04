@@ -1,0 +1,106 @@
+name: Download Workflow File From Non-Prod Env
+
+on:
+  workflow_dispatch:
+    inputs:
+      workflow_id:
+        description: "The ID of the workflow to download"
+        required: true
+      output_file:
+        description: "The name of the output file"
+        required: true
+
+jobs:
+  download-file:
+    runs-on: hephaestus-ctci-small
+
+    env:
+      TOKEN_URL: "https://ces-k8s-expertai-nonprod.aws.wiley.com/auth/realms/platform-nonprod/protocol/openid-connect/token"
+      IMPORT_URL: "https://ces-k8s-expertai-nonprod.aws.wiley.com/api/v1"
+      WORKFLOW_ID: ${{ inputs.workflow_id }}
+      OUTPUT_FILE: ${{ inputs.output_file }}
+
+    steps:
+      - name: Install AWS CLI
+        shell: bash
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          aws --version
+          echo "✅ awscli installed successfully"
+
+      - name: Switch role
+        uses: wiley/do-contenttech-github-actions/actions/configure-aws-credentials@master
+        with:
+          cloud: "ccp_nonprod"
+
+      - name: Get secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            arn:aws:secretsmanager:us-east-1:453304086300:secret:run-secrets/ces-k8s-expertai/nonprod-II4uMh
+          parse-json-secrets: true
+
+      - name: Get authentication token
+        run: |
+          token=$(curl --location \
+                   --request POST \
+                   --header 'Content-Type: application/x-www-form-urlencoded' \
+                   --data-urlencode 'grant_type=client_credentials' \
+                   --data-urlencode "client_id=$RUN_SECRETS_CES_K8S_EXPERTAI_NONPROD_CLIENT_ID" \
+                   --data-urlencode "client_secret=$RUN_SECRETS_CES_K8S_EXPERTAI_NONPROD_CLIENT_SECRET" \
+                   $TOKEN_URL | grep -o '"access_token":"[^"]*"' | sed 's/"access_token":"//;s/"$//')
+    
+          if [ -n "$token" ]; then
+            echo "token=$token" >> $GITHUB_ENV
+            echo "✅ Access token retrieved"
+          else
+            echo "❌ Failed to retrieve access token"
+            exit 1
+          fi
+
+      - name: Get Cookie
+        run: |
+          OTP_COOKIE=$(curl -s -X POST "$IMPORT_URL/resources-download" \
+                      -H "accept: application/json, text/plain, */*" \
+                      -H "Authorization: Bearer $token" \
+                      -c - | grep -E 'otp\s+' | awk '{print $7}')
+          
+          if [ -z "$OTP_COOKIE" ]; then
+          echo "❌ Failed to retrieve OTP cookie"
+          exit 1
+          fi
+          echo "✅ OTP cookie retrieved"
+          echo "OPT_COOKIE=$OTP_COOKIE"
+          echo "OTP_COOKIE=$OTP_COOKIE" >> $GITHUB_ENV
+
+      - name: Download Workflow
+        run: |
+          echo "📥 Downloading workflow file"
+          TIMESTAMP=$(date +"%Y_%m_%d_%H_%M_%S")
+          OUTPUT_FILE_WITH_TIMESTAMP="${OUTPUT_FILE%.*}_$TIMESTAMP.${OUTPUT_FILE##*.}"
+          curl -C - --fail -L \
+            -H "Authorization: Bearer $token" \
+            -b "otp=$OTP_COOKIE" \
+            "$IMPORT_URL/workflow/$WORKFLOW_ID/export?filename=down" \
+            -o "$OUTPUT_FILE_WITH_TIMESTAMP" 
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ File downloaded successfully: $OUTPUT_FILE_WITH_TIMESTAMP"
+          else
+            echo "❌ Download failed"
+            exit 1
+          fi
+
+      - name: Upload the file to S3
+        run: |
+          echo "📤 Uploading file to S3"
+          aws s3 cp "$OUTPUT_FILE_WITH_TIMESTAMP" "s3://ces-k8s-expertai-nonprod-backup/$OUTPUT_FILE_WITH_TIMESTAMP"
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ File uploaded successfully to S3"
+          else
+            echo "❌ Upload failed"
+            exit 1
+          fi
