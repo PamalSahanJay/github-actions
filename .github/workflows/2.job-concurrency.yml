@@ -30,4 +30,5 @@ jobs:
         timeout-minutes: 1
         run: echo "Deploying..."
       - name : sleep 10 seconds
+        timeout-minutes: 0.1
         run: sleep 600s
