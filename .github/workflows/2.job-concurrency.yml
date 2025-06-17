@@ -27,7 +27,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Deploy
-        timeout-minutes: 0.1
+        timeout-minutes: 1
         run: echo "Deploying..."
       - name : sleep 10 seconds
         run: sleep 600s
